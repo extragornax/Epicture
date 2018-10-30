@@ -76,7 +76,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_toto -> {
-
+                val toto = OauthManager()
+                toto.login()
             }
 
             R.id.nav_manage -> {

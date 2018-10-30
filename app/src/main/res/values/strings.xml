@@ -6,4 +6,7 @@
     <string name="nav_header_subtitle">toto@toto.fr</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="com_oauth_client_id">5c7c13bd1c6d930</string>
+    <string name="com_oauth_client_secret">63c586793e9600303d23cbabc4ffe6c849fb3374</string>
+    <string name="com_oauth_domain">https://api.imgur.com/oauth2/authorize</string>
 </resources>

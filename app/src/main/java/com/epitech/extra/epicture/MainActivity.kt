@@ -72,7 +72,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_slideshow -> {
-
+                val toto = OauthManager()
+                toto.getUserFavorites("Extragornax")
             }
 
             R.id.nav_toto -> {

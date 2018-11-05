@@ -16,7 +16,9 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.net.URL
 import android.os.StrictMode
+import java.io.FileNotFoundException
 import java.lang.Exception
+import java.net.HttpURLConnection
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -138,23 +140,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserCreationDate(){
-        // val tmpUrl = "https://api.imgur.com/3/account/" + Imgur.username
-
-        //val urldata: String = URL("http://date.jsontest.com/").readText()
-
         var url : String? = null
         url = if (Imgur.username == null) {
             "https://api.imgur.com/3/account/Extragornax"
         } else {
             "https://api.imgur.com/3/account/" + Imgur.username
         }
-        val urldata: String = URL(url).readText()
-        println("I RECEIVED THIS [${urldata}]")
+
+        val connection = URL(url).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        println("============================================")
+        if (Imgur.accessToken != null) {
+            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken")
+            println("Authorization Bearer ${Imgur.accessToken}")
+        } else {
+            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
+            println("Authorization Client-ID ${R.string.com_oauth_client_id}")
+        }
+
+        var apiData: String? = null
+        try {
+            apiData = connection.inputStream.bufferedReader().readText()
+            println("I RECEIVED THIS [${apiData}]")
+        } catch (e: FileNotFoundException) {
+            println("CRASH FileNotFoundException ${e.stackTrace} -> ${e.message} -> ${e.cause}")
+        }
+
 
         var createDate: String? = null
 
         try {
-            var jsonobj = parseJson(urldata)
+            var jsonobj = parseJson(apiData.toString())
             createDate = jsonobj!!.getString("created")
         } catch (e: Exception) {
             createDate = "0"

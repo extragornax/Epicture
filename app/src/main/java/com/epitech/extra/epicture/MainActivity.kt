@@ -1,5 +1,6 @@
 package com.epitech.extra.epicture
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -10,13 +11,24 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.net.URL
+import android.os.StrictMode
+import java.lang.Exception
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+        }
+
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
@@ -31,6 +43,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        if (!Imgur.loggedIn) {
+            val oauth = Intent(this, OauthWindow::class.java)
+            startActivity(oauth)
+        } else {
+            userNameInTab.text = Imgur.username
+        }
+        if (Imgur.creationDate == null) {
+            getUserCreationDate()
+        }
+        //creationDataInTab.text = Imgur.username
+        //creationDataInTab.text = Imgur.creationDate
+    }
+
+    override fun onResume() {
+        if (Imgur.loggedIn) {
+            userNameInTab.text = Imgur.username
+        }
+        super.onResume()
     }
 
     override fun onBackPressed() {
@@ -61,13 +92,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_import -> {
-                val gallery = Import    ()
-                hello_world_id.text = gallery.retClassName()
+                //val importIntent = Intent(this, Import::class.java)
+                //startActivity(importIntent)
             }
 
             R.id.nav_gallery -> {
-                val gallery = Gallery()
-                hello_world_id.text = gallery.retClassName()
+               // val gallery = Gallery()
+                // hello_world_id.text = gallery.retClassName()
 
             }
 
@@ -76,8 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_toto -> {
-                val toto = OauthManager()
-                toto.login()
+
             }
 
             R.id.nav_manage -> {
@@ -96,4 +126,54 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    fun parseJson(json: String): JSONObject? {
+        var jsonObject: JSONObject? = null
+        try {
+            jsonObject = JSONObject(json)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return jsonObject
+    }
+
+    private fun getUserCreationDate(){
+        // val tmpUrl = "https://api.imgur.com/3/account/" + Imgur.username
+
+        //val urldata: String = URL("http://date.jsontest.com/").readText()
+
+        var url : String? = null
+        url = if (Imgur.username == null) {
+            "https://api.imgur.com/3/account/Extragornax"
+        } else {
+            "https://api.imgur.com/3/account/" + Imgur.username
+        }
+        val urldata: String = URL(url).readText()
+        println("I RECEIVED THIS [${urldata}]")
+
+        var createDate: String? = null
+
+        try {
+            var jsonobj = parseJson(urldata)
+            createDate = jsonobj!!.getString("created")
+        } catch (e: Exception) {
+            createDate = "0"
+        }
+
+        println("CREATED == $createDate")
+
+        Imgur.creationDate = createDate
+
+        /*
+        val connection = URL("https://api.imgur.com/3/account/" + Imgur.username).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        if (Imgur.accessToken != null)
+            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken");
+        else
+            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
+        val toto: String = connection.inputStream.bufferedReader().readText()
+        */
+    }
 }
+
+

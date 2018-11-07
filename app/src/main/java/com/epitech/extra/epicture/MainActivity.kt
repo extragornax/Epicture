@@ -14,11 +14,13 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import org.json.JSONException
 import org.json.JSONObject
-import java.net.URL
 import android.os.StrictMode
-import java.io.FileNotFoundException
+import android.view.View
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.lang.Exception
-import java.net.HttpURLConnection
+
+
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -52,16 +54,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             userNameInTab.text = Imgur.username
         }
-        if (Imgur.creationDate == null) {
-            getUserCreationDate()
-        }
-        //creationDataInTab.text = Imgur.username
-        //creationDataInTab.text = Imgur.creationDate
+
+        val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
+        val menuNav = navigationView.menu
+        val relogVal = menuNav.findItem(R.id.nav_relog)
+        relogVal.title = "Disconnect"
     }
 
     override fun onResume() {
         if (Imgur.loggedIn) {
             userNameInTab.text = Imgur.username
+            creationDataInTab.text = Imgur.creationDate
         }
         super.onResume()
     }
@@ -108,8 +111,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
 
-            R.id.nav_toto -> {
+            R.id.nav_relog -> {
+                if (!Imgur.loggedIn) {
+                    val oauth = Intent(this, OauthWindow::class.java)
+                    startActivity(oauth)
+                    userNameInTab.text = Imgur.username
+                    creationDataInTab.text = "Feature incoming"
 
+                    val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
+                    val menuNav = navigationView.menu
+                    val relogVal = menuNav.findItem(R.id.nav_relog)
+                    relogVal.title = "Disconnect"
+                } else {
+                    userNameInTab.text = "Disconnected"
+                    creationDataInTab.text = "Disconnected"
+                    Imgur.username = null
+                    Imgur.accessToken = null
+                    Imgur.creationDate = null
+                    Imgur.refreshToken = null
+                    Imgur.loggedIn = false
+                    val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
+                    val menuNav = navigationView.menu
+                    val relogVal = menuNav.findItem(R.id.nav_relog)
+                    relogVal.title = "Connect"
+                }
             }
 
             R.id.nav_manage -> {
@@ -127,68 +152,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    fun parseJson(json: String): JSONObject? {
-        var jsonObject: JSONObject? = null
-        try {
-            jsonObject = JSONObject(json)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return jsonObject
-    }
-
-    private fun getUserCreationDate(){
-        var url : String? = null
-        url = if (Imgur.username == null) {
-            "https://api.imgur.com/3/account/Extragornax"
-        } else {
-            "https://api.imgur.com/3/account/" + Imgur.username
-        }
-
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        println("============================================")
-        if (Imgur.accessToken != null) {
-            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken")
-            println("Authorization Bearer ${Imgur.accessToken}")
-        } else {
-            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
-            println("Authorization Client-ID ${R.string.com_oauth_client_id}")
-        }
-
-        var apiData: String? = null
-        try {
-            apiData = connection.inputStream.bufferedReader().readText()
-            println("I RECEIVED THIS [${apiData}]")
-        } catch (e: FileNotFoundException) {
-            println("CRASH FileNotFoundException ${e.stackTrace} -> ${e.message} -> ${e.cause}")
-        }
-
-
-        var createDate: String? = null
-
-        try {
-            var jsonobj = parseJson(apiData.toString())
-            createDate = jsonobj!!.getString("created")
-        } catch (e: Exception) {
-            createDate = "0"
-        }
-
-        println("CREATED == $createDate")
-
-        Imgur.creationDate = createDate
-
-        /*
-        val connection = URL("https://api.imgur.com/3/account/" + Imgur.username).openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        if (Imgur.accessToken != null)
-            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken");
-        else
-            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
-        val toto: String = connection.inputStream.bufferedReader().readText()
-        */
     }
 }
 

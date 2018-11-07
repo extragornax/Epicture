@@ -3,11 +3,58 @@ package com.epitech.extra.epicture
 import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONException
+import org.json.JSONObject
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import android.widget.Toast
+
+
+
+
 
 class OauthWindow : AppCompatActivity() {
+
+    fun parseJson(json: String): JSONObject? {
+        var jsonObject: JSONObject? = null
+        try {
+            jsonObject = JSONObject(json)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return jsonObject
+    }
+
+    private fun getUserCreationDate(){
+        var url : String? = null
+        url = if (Imgur.username == null) {
+            "https://api.imgur.com/3/account/Extragornax"
+        } else {
+            "https://api.imgur.com/3/account/" + Imgur.username
+        }
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("authorization", "Bearer ${Imgur.accessToken}")
+            .addHeader("cache-control", "no-cache")
+            .build()
+        val response = client.newCall(request).execute()
+
+        var json = response.body()?.string()
+        println("GOT JSON $json")
+
+        val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
+        val data = jsonObj.getJSONObject("data")
+        Imgur.creationDate = data.getString("created")
+        println("CREATION DATE IS ${Imgur.creationDate}")
+    }
 
     private fun splitUrl(url: String, view: WebView) {
         val outerSplit =
@@ -23,6 +70,7 @@ class OauthWindow : AppCompatActivity() {
         }
         if (Imgur.accessToken != null && Imgur.username != null)
             Imgur.loggedIn = true
+        getUserCreationDate()
         finish()
     }
 
@@ -37,14 +85,12 @@ class OauthWindow : AppCompatActivity() {
         imgurWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 //val url = request.url.toString()
-                print(url)
+                println(url)
 
                 if (url.contains("http://epicture.extragornax.fr")) {
                     splitUrl(url, view)
-                    Log.d("TOTO", "kappa")
                 } else {
                     view.loadUrl(url)
-                    Log.d("TOTO", "pas kappa")
                 }
                 return true
             }

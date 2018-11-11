@@ -13,47 +13,30 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import android.widget.Toast
-
-
-
+import java.lang.Long
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class OauthWindow : AppCompatActivity() {
 
-    fun parseJson(json: String): JSONObject? {
-        var jsonObject: JSONObject? = null
-        try {
-            jsonObject = JSONObject(json)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return jsonObject
-    }
-
-    private fun getUserCreationDate(){
+   private fun getUserCreationDate(){
         var url : String? = null
         url = if (Imgur.username == null) {
             "https://api.imgur.com/3/account/Extragornax"
         } else {
             "https://api.imgur.com/3/account/" + Imgur.username
         }
+       var apiCaller = ApiCaller()
+       var response = apiCaller.makeACall(url)
 
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .addHeader("authorization", "Bearer ${Imgur.accessToken}")
-            .addHeader("cache-control", "no-cache")
-            .build()
-        val response = client.newCall(request).execute()
-
-        var json = response.body()?.string()
-        println("GOT JSON $json")
-
-        val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
-        val data = jsonObj.getJSONObject("data")
-        Imgur.creationDate = data.getString("created")
-        println("CREATION DATE IS ${Imgur.creationDate}")
+       var json = response.body()?.string()
+       val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
+       val data = jsonObj.getJSONObject("data")
+       var dateString = data.getString("created")
+       val sdf = SimpleDateFormat("MM/dd/yyyy")
+       val netDate = Date(Long.parseLong(dateString) * 1000)
+        Imgur.creationDate = "Since " + sdf.format(netDate).toString()
     }
 
     private fun splitUrl(url: String, view: WebView) {

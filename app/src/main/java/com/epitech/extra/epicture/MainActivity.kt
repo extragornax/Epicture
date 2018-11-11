@@ -1,6 +1,7 @@
 package com.epitech.extra.epicture
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -12,15 +13,10 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
-import org.json.JSONException
-import org.json.JSONObject
 import android.os.StrictMode
 import android.view.View
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.lang.Exception
-
-
+import com.squareup.picasso.Picasso
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -61,10 +57,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         relogVal.title = "Disconnect"
     }
 
+    private fun getUserProfilePicture(){
+        var data = Imgur.getUserInfo()
+        var urlString = data!!.getString("avatar")
+        Picasso.get().load(urlString).into(userPageIcon)
+        Imgur.creationDate = "Since "
+    }
+
     override fun onResume() {
         if (Imgur.loggedIn) {
             userNameInTab.text = Imgur.username
             creationDataInTab.text = Imgur.creationDate
+            getUserProfilePicture()
         }
         super.onResume()
     }

@@ -23,8 +23,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".OauthWindow"></activity>
-        <activity android:name=".OauthManager"></activity>
-        <activity android:name=".Import"></activity>
     </application>
 
 </manifest>

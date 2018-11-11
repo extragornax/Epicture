@@ -3,7 +3,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single" android:id="@+id/sidebarMenuGroup">
         <item
                 android:id="@+id/nav_import"
                 android:icon="@drawable/ic_menu_camera"
@@ -17,9 +17,9 @@
                 android:icon="@drawable/ic_menu_slideshow"
                 android:title="Slideshow"/>
         <item
-                android:id="@+id/nav_toto"
+                android:id="@+id/nav_relog"
                 android:icon="@android:drawable/btn_star_big_off"
-                android:title="Toto"/>
+                android:title="Connect"/>
         <item
                 android:id="@+id/nav_manage"
                 android:icon="@drawable/ic_menu_manage"

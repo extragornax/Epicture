@@ -48,14 +48,10 @@ class OauthWindow : AppCompatActivity() {
 
         imgurWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                //val url = request.url.toString()
-                println(url)
-
-                if (url.contains("http://epicture.extragornax.fr")) {
+                if (url.contains("http://epicture.extragornax.fr"))
                     splitUrl(url, view)
-                } else {
+                else
                     view.loadUrl(url)
-                }
                 return true
             }
         }

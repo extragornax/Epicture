@@ -1,7 +1,6 @@
 package com.epitech.extra.epicture
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -16,7 +15,8 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 import android.os.StrictMode
 import android.view.View
 import com.squareup.picasso.Picasso
-import java.io.File
+
+
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -24,44 +24,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-        }
-
+        if (android.os.Build.VERSION.SDK_INT > 9)
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
+        fab.setOnClickListener { view ->Snackbar.make(view, "Surprise!", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
         nav_view.setNavigationItemSelectedListener(this)
-
         if (!Imgur.loggedIn) {
             val oauth = Intent(this, OauthWindow::class.java)
             startActivity(oauth)
-        } else {
+        } else
             userNameInTab.text = Imgur.username
-        }
-
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         val menuNav = navigationView.menu
-        val relogVal = menuNav.findItem(R.id.nav_relog)
-        relogVal.title = "Disconnect"
+        menuNav.findItem(R.id.nav_relog).title = "Disconnect"
     }
 
     private fun getUserProfilePicture(){
-        var data = Imgur.getUserInfo()
-        var urlString = data!!.getString("avatar")
-        Picasso.get().load(urlString).into(userPageIcon)
-        Imgur.creationDate = "Since "
+        if (Imgur.profileImage == null) {
+            var data = Imgur.getUserInfo()
+            var urlString = data!!.getString("avatar")
+            Imgur.profileImage = urlString
+        }
+        Picasso.get().load(Imgur.profileImage).into(userPageIcon)
     }
 
     override fun onResume() {
@@ -76,9 +63,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
+        } else
             super.onBackPressed()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -91,9 +77,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -134,6 +120,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Imgur.creationDate = null
                     Imgur.refreshToken = null
                     Imgur.loggedIn = false
+                    Imgur.profileImage = null
                     val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
                     val menuNav = navigationView.menu
                     val relogVal = menuNav.findItem(R.id.nav_relog)
@@ -153,7 +140,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         }
-
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }

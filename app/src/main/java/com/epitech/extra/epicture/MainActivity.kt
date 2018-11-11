@@ -13,18 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import android.os.StrictMode
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.gallery.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.lang.Exception
 
 
 

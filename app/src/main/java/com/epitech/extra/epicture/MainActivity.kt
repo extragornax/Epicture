@@ -143,6 +143,54 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    fun parseJson(json: String): JSONObject? {
+        var jsonObject: JSONObject? = null
+        try {
+            jsonObject = JSONObject(json)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return jsonObject
+    }
+
+    private fun getUserCreationDate(){
+        // val tmpUrl = "https://api.imgur.com/3/account/" + Imgur.username
+
+        //val urldata: String = URL("http://date.jsontest.com/").readText()
+
+        var url : String? = null
+        url = if (Imgur.username == null) {
+            "https://api.imgur.com/3/account/Extragornax"
+        } else {
+            "https://api.imgur.com/3/account/" + Imgur.username
+        }
+        val urldata: String = URL(url).readText()
+        println("I RECEIVED THIS [${urldata}]")
+
+        var createDate: String? = null
+
+        try {
+            var jsonobj = parseJson(urldata)
+            createDate = jsonobj!!.getString("created")
+        } catch (e: Exception) {
+            createDate = "0"
+        }
+
+        println("CREATED == $createDate")
+
+        Imgur.creationDate = createDate
+
+        /*
+        val connection = URL("https://api.imgur.com/3/account/" + Imgur.username).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        if (Imgur.accessToken != null)
+            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken");
+        else
+            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
+        val toto: String = connection.inputStream.bufferedReader().readText()
+        */
+    }
 }
 
 

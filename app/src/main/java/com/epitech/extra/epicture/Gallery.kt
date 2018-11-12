@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.content_main.hello_world_id
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.InputStream
+import com.epitech.extra.epicture.Imgur
 
 class Gallery : PageTemp("Gallery") {
 
@@ -40,32 +41,40 @@ class Gallery : PageTemp("Gallery") {
         }
     }
 
-    class ProgrammingAdapter(private val data: Array<String>) :
+    class ProgrammingAdapter(private val data: Array<String>, private val item_list: Array<Imgur.Companion.Item>) :
         RecyclerView.Adapter<ProgrammingAdapter.ProgrammingViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgrammingViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.gallery, parent, false)
-            return ProgrammingViewHolder(view)
+            return ProgrammingViewHolder(view, item_list)
         }
 
         override fun onBindViewHolder(holder: ProgrammingViewHolder, position: Int) {
-            val title = data[position]
-            holder.txttitle.text = title
+//            val title = data[position]
+            Picasso.get().load(item_list[position].link).into(holder.imgIcon)
+ //           val tmp_title = item_list[position].title
+  //         holder.txttitle.text = item_list.size.toString()
+//          holder.txttitle.text = item_list[position].title;
+            println(item_list)
+            //Picasso.get().load(item_list[position].link).into(holder.imgIcon)
+//            holder.imgIcon
         }
 
         override fun getItemCount(): Int {
-            return data.size
+            return item_list.size
+//return data.size
+
         }
 
-        inner class ProgrammingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class ProgrammingViewHolder(itemView: View, val item_list: Array<Imgur.Companion.Item>) : RecyclerView.ViewHolder(itemView) {
 
             internal var imgIcon: ImageView
             internal var txttitle: TextView
 
             init {
                 imgIcon = itemView.findViewById(R.id.picture) as ImageView
-                Picasso.get().load("https://i.imgur.com/H981AN7.jpg").into(imgIcon)
+//                Picasso.get().load(item_list[0].link).into(imgIcon)
                 txttitle = itemView.findViewById(R.id.txttitle) as TextView
             }
         }

@@ -1,6 +1,5 @@
 package com.epitech.extra.epicture
 
-import com.epitech.extra.epicture.Imgur
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -16,7 +15,9 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 import android.os.StrictMode
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.TextureView
 import android.view.View
+import android.widget.TextView
 import com.squareup.picasso.Picasso
 import org.json.JSONException
 import org.json.JSONObject
@@ -93,7 +94,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_import -> {
                 //val importIntent = Intent(this, Import::class.java)
                 //startActivity(importIntent)
-            }
+                val img_list = Imgur.getImagesUser()
+                val u = findViewById<TextView>(R.id.hello_world_id)
+//                u.text = img_list.size.toString()
+        }
 
             R.id.nav_gallery -> {
                 /*
@@ -106,8 +110,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val langagtes = arrayOf("Don't", "Blame", "Me")
                 val a = findViewById<RecyclerView>(R.id.recycler_view)
                 a.setLayoutManager(LinearLayoutManager(this))
-                val img_list = Imgur.getImagesUser();
-                val gallery = Gallery.ProgrammingAdapter(langagtes)
+                val img_list = Imgur.getImagesUser()
+                //val img_array = arrayOfNulls<Item>(img_list.size)
+                val arrayOfItems = img_list.toTypedArray()
+                val gallery = Gallery.ProgrammingAdapter(langagtes, arrayOfItems)
                 a.setAdapter(gallery)
             }
             R.id.nav_slideshow -> {

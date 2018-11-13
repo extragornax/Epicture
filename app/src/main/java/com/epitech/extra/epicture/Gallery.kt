@@ -41,7 +41,7 @@ class Gallery : PageTemp("Gallery") {
         }
     }
 
-    class ProgrammingAdapter(private val data: Array<String>, private val item_list: Array<Imgur.Companion.Item>) :
+    class ProgrammingAdapter(private val item_list: Array<Imgur.Companion.Item>) :
         RecyclerView.Adapter<ProgrammingAdapter.ProgrammingViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgrammingViewHolder {
@@ -51,19 +51,12 @@ class Gallery : PageTemp("Gallery") {
         }
 
         override fun onBindViewHolder(holder: ProgrammingViewHolder, position: Int) {
-//            val title = data[position]
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
- //           val tmp_title = item_list[position].title
-  //         holder.txttitle.text = item_list.size.toString()
-//          holder.txttitle.text = item_list[position].title;
-            println(item_list)
-            //Picasso.get().load(item_list[position].link).into(holder.imgIcon)
-//            holder.imgIcon
+                holder.txttitle.text = item_list[position].title;
         }
 
         override fun getItemCount(): Int {
             return item_list.size
-//return data.size
 
         }
 
@@ -74,7 +67,6 @@ class Gallery : PageTemp("Gallery") {
 
             init {
                 imgIcon = itemView.findViewById(R.id.picture) as ImageView
-//                Picasso.get().load(item_list[0].link).into(imgIcon)
                 txttitle = itemView.findViewById(R.id.txttitle) as TextView
             }
         }

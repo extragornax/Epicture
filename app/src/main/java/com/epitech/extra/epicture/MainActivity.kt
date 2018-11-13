@@ -100,20 +100,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
             R.id.nav_gallery -> {
-                /*
-               val newtext = findViewById<TextView>(R.id.hello_world_id) //gallery.retClassName()
-            newtext.setText("hello darkness my old friend")
-                setContentView(R.layout.gallery)
-                val pic = findViewById<ImageView>(R.id.picture)
-                Picasso.get().load("https://i.imgur.com/H981AN7.jpg").into(picture)*/
-                setContentView(R.layout.gallery_back)
-                val langagtes = arrayOf("Don't", "Blame", "Me")
-                val a = findViewById<RecyclerView>(R.id.recycler_view)
+//                setContentView(R.layout.gallery_back)
+                val a = findViewById<RecyclerView>(R.id.recycler_test)
                 a.setLayoutManager(LinearLayoutManager(this))
                 val img_list = Imgur.getImagesUser()
-                //val img_array = arrayOfNulls<Item>(img_list.size)
                 val arrayOfItems = img_list.toTypedArray()
-                val gallery = Gallery.ProgrammingAdapter(langagtes, arrayOfItems)
+                val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
                 a.setAdapter(gallery)
             }
             R.id.nav_slideshow -> {

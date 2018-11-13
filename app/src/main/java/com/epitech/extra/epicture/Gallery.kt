@@ -2,8 +2,6 @@ package com.epitech.extra.epicture
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,12 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.epitech.extra.epicture.R.layout.gallery
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.content_main.hello_world_id
-import kotlinx.android.synthetic.main.content_main.*
-import java.io.InputStream
-import com.epitech.extra.epicture.Imgur
 
 class Gallery : PageTemp("Gallery") {
 

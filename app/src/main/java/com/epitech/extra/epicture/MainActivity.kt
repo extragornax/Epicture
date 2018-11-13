@@ -13,10 +13,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import android.os.StrictMode
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.TextureView
 import android.view.View
+import android.widget.TextView
 import com.squareup.picasso.Picasso
-
-
+import org.json.JSONException
+import org.json.JSONObject
+import java.net.URL
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -89,14 +94,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_import -> {
                 //val importIntent = Intent(this, Import::class.java)
                 //startActivity(importIntent)
-            }
+                val img_list = Imgur.getImagesUser()
+                val u = findViewById<TextView>(R.id.hello_world_id)
+//                u.text = img_list.size.toString()
+        }
 
             R.id.nav_gallery -> {
-               // val gallery = Gallery()
-                // hello_world_id.text = gallery.retClassName()
-
+//                setContentView(R.layout.gallery_back)
+                val a = findViewById<RecyclerView>(R.id.recycler_test)
+                a.setLayoutManager(LinearLayoutManager(this))
+                val img_list = Imgur.getImagesUser()
+                val arrayOfItems = img_list.toTypedArray()
+                val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
+                a.setAdapter(gallery)
             }
-
             R.id.nav_slideshow -> {
 
             }

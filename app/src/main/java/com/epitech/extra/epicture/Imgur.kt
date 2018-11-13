@@ -1,12 +1,13 @@
 package com.epitech.extra.epicture
 
+import android.widget.TextView
 import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import android.view.*
+import android.view.View
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import org.json.JSONArray
 
 class Imgur {
     companion object {

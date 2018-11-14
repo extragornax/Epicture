@@ -15,4 +15,15 @@ class ApiCaller {
             .build()
         return client.newCall(request).execute()
     }
+
+    fun makeACallPost(url: String) : Response {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .post(null)
+            .addHeader("authorization", "Bearer ${Imgur.accessToken}")
+            .addHeader("cache-control", "no-cache")
+            .build()
+        return client.newCall(request).execute()
+    }
 }

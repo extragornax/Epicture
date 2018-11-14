@@ -10,12 +10,11 @@ import android.webkit.WebViewClient
 class OauthWindow : AppCompatActivity() {
 
    private fun getUserCreationDate(){
-        var data = Imgur.getUserInfo()
-        var dateString = data!!.getString("created")
+        var dateString = Imgur.getUserInfo()!!.getString("created")
         Imgur.creationDate = "Since " + Imgur.convertEpochToDate(dateString)
    }
 
-    private fun splitUrl(url: String, view: WebView) {
+    private fun splitUrl(url: String) {
         val outerSplit =
             url.split("\\#".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].split("\\&".toRegex())
                 .dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -30,6 +29,7 @@ class OauthWindow : AppCompatActivity() {
         if (Imgur.accessToken != null && Imgur.username != null)
             Imgur.loggedIn = true
         getUserCreationDate()
+        ToastPrinter().print("You are now connected ${Imgur.username}!", this)
         finish()
     }
 
@@ -44,7 +44,7 @@ class OauthWindow : AppCompatActivity() {
         imgurWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 if (url.contains("http://epicture.extragornax.fr"))
-                    splitUrl(url, view)
+                    splitUrl(url)
                 else
                     view.loadUrl(url)
                 return true

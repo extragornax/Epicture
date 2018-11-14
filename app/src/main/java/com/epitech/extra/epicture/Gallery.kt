@@ -2,6 +2,7 @@ package com.epitech.extra.epicture
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 
-class Gallery : PageTemp("Gallery") {
+class Gallery : AppCompatActivity() {
 
 
     internal class DownloadImageTask(var pic: ImageView) : AsyncTask<String, Void, Bitmap>() {

@@ -8,14 +8,16 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
-
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,14 +32,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
-        if (!Imgur.loggedIn) {
-            val oauth = Intent(this, OauthWindow::class.java)
-            startActivity(oauth)
-        } else
-            userNameInTab.text = Imgur.username
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         val menuNav = navigationView.menu
-        menuNav.findItem(R.id.nav_relog).title = "Disconnect"
+        if (Imgur.loggedIn) {
+            userNameInTab.text = Imgur.username
+            menuNav.findItem(R.id.nav_relog).title = "Disconnect"
+            getUserProfilePicture()
+            Toast.makeText(this, "Welcome back ${Imgur.username}", Toast.LENGTH_SHORT).show()
+        } else {
+            menuNav.findItem(R.id.nav_relog).title = "Connect"
+            Toast.makeText(this, "Welcome! Please connect your account", Toast.LENGTH_SHORT).show()
+        }
+
+        setGHotPage()
     }
 
     private fun getUserProfilePicture(){
@@ -81,26 +88,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    fun setGHotPage() {
+        val a = findViewById<RecyclerView>(R.id.recycler_test)
+        a.layoutManager = LinearLayoutManager(this)
+        val img_list = Imgur.getHotViralImages()
+        val arrayOfItems = img_list.toTypedArray()
+        val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
+        a.adapter = gallery
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_import -> {
+            R.id.nav_upload -> {
+                ToastPrinter().print("Upload soon to be done!", this)
+            }
 
+            R.id.nav_hotpage -> {
+                setGHotPage()
+                ToastPrinter().print("Hot section", this)
             }
 
             R.id.nav_gallery -> {
 //                setContentView(R.layout.gallery_back)
                 val a = findViewById<RecyclerView>(R.id.recycler_test)
                 a.setLayoutManager(LinearLayoutManager(this))
-                val img_list = Imgur.getImagesUser()
-                val arrayOfItems = img_list.toTypedArray()
-                val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
+                val gallery = Gallery.ProgrammingAdapter(Imgur.getImagesUser().toTypedArray())
                 a.setAdapter(gallery)
+                ToastPrinter().print("User favorites", this)
             }
 
-            R.id.
-                nav_slideshow -> {
-
+            R.id.nav_search -> {
+                ToastPrinter().print("Search soon to be done!", this)
             }
 
             R.id.nav_relog -> {
@@ -127,71 +146,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val menuNav = navigationView.menu
                     val relogVal = menuNav.findItem(R.id.nav_relog)
                     relogVal.title = "Connect"
+                    ToastPrinter().print("You are now disconnected!", this)
                 }
             }
 
-            R.id.nav_manage -> {
-
-            }
-
+            /*
             R.id.nav_share -> {
+                ToastPrinter().print("Thank you for sharing our app!")
+            }
+            */
 
+            R.id.nav_extragornax -> {
+                ToastPrinter().print("https://github.com/Extragornax", this)
+            }
+            R.id.nav_cheap -> {
+                ToastPrinter().print("https://github.com/DotCheap", this)
             }
 
-            R.id.nav_send -> {
-
-            }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    fun parseJson(json: String): JSONObject? {
-        var jsonObject: JSONObject? = null
-        try {
-            jsonObject = JSONObject(json)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return jsonObject
-    }
-
-    private fun getUserCreationDate(){
-        // val tmpUrl = "https://api.imgur.com/3/account/" + Imgur.username
-
-        //val urldata: String = URL("http://date.jsontest.com/").readText()
-
-        var url : String? = null
-        url = if (Imgur.username == null) {
-            "https://api.imgur.com/3/account/Extragornax"
-        } else {
-            "https://api.imgur.com/3/account/" + Imgur.username
-        }
-        val urldata: String = URL(url).readText()
-        println("I RECEIVED THIS [${urldata}]")
-
-        var createDate: String? = null
-
-        try {
-            var jsonobj = parseJson(urldata)
-            createDate = jsonobj!!.getString("created")
-        } catch (e: Exception) {
-            createDate = "0"
-        }
-
-        println("CREATED == $createDate")
-
-        Imgur.creationDate = createDate
-
-        /*
-        val connection = URL("https://api.imgur.com/3/account/" + Imgur.username).openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        if (Imgur.accessToken != null)
-            connection.setRequestProperty("Authorization", "Bearer $Imgur.accessToken");
-        else
-            connection.setRequestProperty("Authorization", "Client-ID ${R.string.com_oauth_client_id}")
-        val toto: String = connection.inputStream.bufferedReader().readText()
-        */
     }
 }
 

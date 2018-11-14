@@ -1,26 +1,20 @@
 package com.epitech.extra.epicture
 
 import android.annotation.SuppressLint
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import java.lang.Long
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class OauthWindow : AppCompatActivity() {
 
    private fun getUserCreationDate(){
-        var data = Imgur.getUserInfo()
-        var dateString = data!!.getString("created")
-        val sdf = SimpleDateFormat("MM/dd/yyyy")
-        val netDate = Date(Long.parseLong(dateString) * 1000)
-        Imgur.creationDate = "Since " + sdf.format(netDate).toString()
+        var dateString = Imgur.getUserInfo()!!.getString("created")
+        Imgur.creationDate = "Since " + Imgur.convertEpochToDate(dateString)
    }
 
-    private fun splitUrl(url: String, view: WebView) {
+    private fun splitUrl(url: String) {
         val outerSplit =
             url.split("\\#".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].split("\\&".toRegex())
                 .dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -35,6 +29,7 @@ class OauthWindow : AppCompatActivity() {
         if (Imgur.accessToken != null && Imgur.username != null)
             Imgur.loggedIn = true
         getUserCreationDate()
+        ToastPrinter().print("You are now connected ${Imgur.username}!", this)
         finish()
     }
 
@@ -49,7 +44,7 @@ class OauthWindow : AppCompatActivity() {
         imgurWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 if (url.contains("http://epicture.extragornax.fr"))
-                    splitUrl(url, view)
+                    splitUrl(url)
                 else
                     view.loadUrl(url)
                 return true

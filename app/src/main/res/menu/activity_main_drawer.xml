@@ -19,7 +19,7 @@
         <item
                 android:id="@+id/nav_gallery"
                 android:icon="@drawable/ic_menu_gallery"
-                android:title="User Favorite"/>
+                android:title="User Submissions"/>
         <item
                 android:id="@+id/nav_search"
                 android:icon="@drawable/ic_menu_gallery"

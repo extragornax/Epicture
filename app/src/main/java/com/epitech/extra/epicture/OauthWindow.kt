@@ -1,13 +1,10 @@
 package com.epitech.extra.epicture
 
 import android.annotation.SuppressLint
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import java.lang.Long
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class OauthWindow : AppCompatActivity() {
@@ -15,9 +12,7 @@ class OauthWindow : AppCompatActivity() {
    private fun getUserCreationDate(){
         var data = Imgur.getUserInfo()
         var dateString = data!!.getString("created")
-        val sdf = SimpleDateFormat("MM/dd/yyyy")
-        val netDate = Date(Long.parseLong(dateString) * 1000)
-        Imgur.creationDate = "Since " + sdf.format(netDate).toString()
+        Imgur.creationDate = "Since " + Imgur.convertEpochToDate(dateString)
    }
 
     private fun splitUrl(url: String, view: WebView) {

@@ -5,11 +5,23 @@ import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import java.lang.Long
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Imgur {
     companion object {
 
-        data class Item(val id: String, val title: String, val favorite : Boolean, val link: String)
+        data class Item(val id : String,
+                        val title : String,
+                        val description : String,
+                        val favorite : Boolean,
+                        val link : String,
+                        val score : String,
+                        val views : String,
+                        val type : String,
+                        val datetime : String)
+
         val gson = GsonBuilder().setPrettyPrinting().create()
         var gsonObjectProfile : JSONObject? = null
         var loggedIn: Boolean = false
@@ -19,10 +31,16 @@ class Imgur {
         var creationDate: String? = null
         var profileImage: String? = null
 
+        fun convertEpochToDate(dateString : String) : String {
+            val sdf = SimpleDateFormat("MM/dd/yyyy")
+            val netDate = Date(Long.parseLong(dateString) * 1000)
+            return sdf.format(netDate).toString()
+        }
+
         fun getImagesUser(): List<Item> {
             var itemsList: List<Item> = try {
                 val client = OkHttpClient()
-                val url = "https://api.imgur.com/3/account/me/images"
+                val url = "https://api.imgur.com/3/account/me/submissions"
                 val request = Request.Builder().url(url).get()
                     .addHeader("cache-control", "no-cache")
                     .addHeader("Authorization", "Bearer $accessToken")

@@ -8,8 +8,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,9 +15,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
-import org.json.JSONException
-import org.json.JSONObject
-import java.net.URL
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -35,25 +30,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
-        if (Imgur.loggedIn) {
+        if (!Imgur.loggedIn) {
+            val oauth = Intent(this, OauthWindow::class.java)
+            startActivity(oauth)
+        } else
             userNameInTab.text = Imgur.username
-            creationDataInTab.text = "Since " + Imgur.creationDate
-            getUserProfilePicture()
-        }
-
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         val menuNav = navigationView.menu
-        menuNav.findItem(R.id.nav_relog).title = "Connect"
-
-        /*
-        ** Set the Recycler images from trending
-        */
-        val a = findViewById<RecyclerView>(R.id.recycler_test)
-        a.setLayoutManager(LinearLayoutManager(this))
-        val img_list = Imgur.getHotViralImages()
-        val arrayOfItems = img_list.toTypedArray()
-        val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
-        a.setAdapter(gallery)
+        menuNav.findItem(R.id.nav_relog).title = "Disconnect"
     }
 
     private fun getUserProfilePicture(){

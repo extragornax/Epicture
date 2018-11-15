@@ -16,7 +16,7 @@ class Imgur : AppCompatActivity() {
         data class Item(val id : String,
                         val title : String,
                         val description : String,
-                        val favorite : Boolean,
+                        val favorite : String,
                         val link : String,
                         val score : String,
                         val views : String,
@@ -49,6 +49,7 @@ class Imgur : AppCompatActivity() {
                 val json = response.body()?.string()
                 val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
                 val data = jsonObj.getJSONArray("data")
+                println(data)
                 gson.fromJson(data.toString(), object : TypeToken<List<Item>>() {}.type)
             } catch (e: Exception) {
                 listOf()
@@ -88,6 +89,21 @@ class Imgur : AppCompatActivity() {
             return this.gsonObjectProfile
         }
 
+        fun isFav(id : String) : String {
+            var url = "https://api.imgur.com/3/image/$id/"
+            var urlString : String?
+
+            try {
+                var response = ApiCaller().makeACallPost(url)
+                var json = response.body()?.string()
+                val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
+                urlString = jsonObj!!.getString("data")
+            } catch (e : Exception) {
+                return "ERROR"
+            }
+            return urlString
+        }
+
         fun changeFavValue(id : String) : String {
             var url = "https://api.imgur.com/3/image/$id/favorite"
             var urlString : String?
@@ -95,6 +111,7 @@ class Imgur : AppCompatActivity() {
             try {
                 var response = ApiCaller().makeACallPost(url)
                 var json = response.body()?.string()
+                println(json)
                 val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
                 urlString = jsonObj!!.getString("data")
             } catch (e : Exception) {

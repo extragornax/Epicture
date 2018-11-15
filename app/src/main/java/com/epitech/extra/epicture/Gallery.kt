@@ -47,17 +47,24 @@ class Gallery : AppCompatActivity() {
         override fun onBindViewHolder(holder: ProgrammingViewHolder, position: Int) {
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
             holder.txttitle.text = item_list[position].title;
-            if (item_list[position].favorite) {
-                holder.likebutton.setImageResource(R.drawable.liked);
+            holder.nbView.text = item_list[position].views
+            println(item_list[position].favorite)
+            if (item_list[position].favorite == "e") {
+                holder.likebutton.setImageResource(R.drawable.liked)
+                holder.likebutton.setTag("Liked")
             } else {
-                holder.likebutton.setImageResource(R.drawable.like);
+                holder.likebutton.setImageResource(R.drawable.like)
+                holder.likebutton.setTag("Unlike")
             }
             holder.likebutton.setOnClickListener {
                 if (Imgur.changeFavValue(item_list[position].id) == "favorited") {
-                    holder.likebutton.setImageResource(R.drawable.liked);
+                    holder.likebutton.setImageResource(R.drawable.liked)
+                    holder.likebutton.setTag("Liked")
                 } else {
-                    holder.likebutton.setImageResource(R.drawable.like);
+                    holder.likebutton.setImageResource(R.drawable.like)
+                    holder.likebutton.setTag("Unlike")
                 }
+
             }
         }
 
@@ -71,11 +78,13 @@ class Gallery : AppCompatActivity() {
             internal var imgIcon: ImageView
             internal var txttitle: TextView
             internal var likebutton: ImageButton
+            internal var nbView: TextView
 
             init {
                 imgIcon = itemView.findViewById(R.id.picture) as ImageView
                 txttitle = itemView.findViewById(R.id.txttitle) as TextView
                 likebutton = itemView.findViewById(R.id.imageButton) as ImageButton
+                nbView = itemView.findViewById(R.id.nbr_view) as TextView
             }
         }
 

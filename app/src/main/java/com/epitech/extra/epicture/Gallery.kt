@@ -15,6 +15,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
+import android.text.method.ScrollingMovementMethod
+
+
 
 class Gallery : AppCompatActivity() {
 
@@ -47,6 +50,7 @@ class Gallery : AppCompatActivity() {
         override fun onBindViewHolder(holder: ProgrammingViewHolder, position: Int) {
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
             holder.txttitle.text = item_list[position].title;
+            holder.txttitle.setMovementMethod(ScrollingMovementMethod())
             holder.nbView.text = item_list[position].views
             Thread(Runnable {
                 if (Imgur.isFav(item_list[position].id)== "true") {

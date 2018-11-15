@@ -106,7 +106,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             R.id.nav_hotpage -> {
                 setGHotPage()
-                ToastPrinter().print("Hot section", this)
+                if (Imgur.loggedIn)
+                    ToastPrinter().print("Hot section", this)
+                else
+                    ToastPrinter().print("You are not connected to your account!", this)
             }
 
             R.id.nav_gallery -> {
@@ -115,7 +118,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 a.setLayoutManager(LinearLayoutManager(this))
                 val gallery = Gallery.ProgrammingAdapter(Imgur.getImagesUser().toTypedArray())
                 a.setAdapter(gallery)
-                ToastPrinter().print("User favorites", this)
+                if (Imgur.loggedIn)
+                    ToastPrinter().print("User favorites", this)
+                else
+                    ToastPrinter().print("You are not connected to your account!", this)
             }
 
             R.id.nav_search -> {

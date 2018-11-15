@@ -94,10 +94,10 @@ class Imgur : AppCompatActivity() {
             var urlString : String?
 
             try {
-                var response = ApiCaller().makeACallPost(url)
+                var response = ApiCaller().makeACall(url)
                 var json = response.body()?.string()
                 val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
-                urlString = jsonObj!!.getString("data")
+                urlString = jsonObj.getJSONObject("data").getString("favorite")
             } catch (e : Exception) {
                 return "ERROR"
             }

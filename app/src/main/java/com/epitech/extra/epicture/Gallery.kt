@@ -48,24 +48,25 @@ class Gallery : AppCompatActivity() {
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
             holder.txttitle.text = item_list[position].title;
             holder.nbView.text = item_list[position].views
-            println(item_list[position].favorite)
-            if (item_list[position].favorite == "true") {
-                holder.likebutton.setImageResource(R.drawable.liked)
-                holder.likebutton.setTag("Liked")
-            } else {
-                holder.likebutton.setImageResource(R.drawable.like)
-                holder.likebutton.setTag("Unlike")
-            }
-            holder.likebutton.setOnClickListener {
-                if (Imgur.changeFavValue(item_list[position].id) == "favorited") {
+            Thread(Runnable {
+                if (Imgur.isFav(item_list[position].id)== "true") {
                     holder.likebutton.setImageResource(R.drawable.liked)
                     holder.likebutton.setTag("Liked")
                 } else {
                     holder.likebutton.setImageResource(R.drawable.like)
                     holder.likebutton.setTag("Unlike")
                 }
-                Imgur.getImagesUser()
-
+            }).start()
+            holder.likebutton.setOnClickListener {
+                Thread(Runnable {
+                    if (Imgur.changeFavValue(item_list[position].id) == "favorited") {
+                        holder.likebutton.setImageResource(R.drawable.liked)
+                        holder.likebutton.setTag("Liked")
+                    } else {
+                        holder.likebutton.setImageResource(R.drawable.like)
+                        holder.likebutton.setTag("Unlike")
+                    }
+                }).start()
             }
         }
 

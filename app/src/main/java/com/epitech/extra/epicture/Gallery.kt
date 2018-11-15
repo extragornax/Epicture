@@ -51,16 +51,20 @@ class Gallery : AppCompatActivity() {
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
             holder.txttitle.text = item_list[position].title;
             holder.txttitle.setMovementMethod(ScrollingMovementMethod())
-            holder.nbView.text = item_list[position].views
-            Thread(Runnable {
-                if (Imgur.isFav(item_list[position].id)== "true") {
-                    holder.likebutton.setImageResource(R.drawable.liked)
-                    holder.likebutton.setTag("Liked")
-                } else {
-                    holder.likebutton.setImageResource(R.drawable.like)
-                    holder.likebutton.setTag("Unlike")
-                }
-            }).start()
+            holder.nbView.text = "Vues: " + item_list[position].views
+            if (Imgur.loggedIn) {
+                Thread(Runnable {
+                    if (Imgur.isFav(item_list[position].id)== "true") {
+                        holder.likebutton.setImageResource(R.drawable.liked)
+                        holder.likebutton.setTag("Liked")
+                    } else {
+                        holder.likebutton.setImageResource(R.drawable.like)
+                        holder.likebutton.setTag("Unlike")
+                    }
+                }).start()
+            } else {
+                holder.likebutton.setVisibility(View.GONE)
+            }
             holder.likebutton.setOnClickListener {
                 Thread(Runnable {
                     if (Imgur.changeFavValue(item_list[position].id) == "favorited") {

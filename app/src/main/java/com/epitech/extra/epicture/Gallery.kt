@@ -1,4 +1,6 @@
 package com.epitech.extra.epicture
+import com.epitech.extra.epicture.ToastPrinter
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
@@ -8,8 +10,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 
 class Gallery : AppCompatActivity() {
@@ -30,12 +34,9 @@ class Gallery : AppCompatActivity() {
             return mIcon11
         }
 
-        override fun onPostExecute(result: Bitmap) {
-            pic.setImageBitmap(result)
-        }
     }
 
-    class ProgrammingAdapter(private val item_list: Array<Imgur.Companion.Item>) :
+    class ProgrammingAdapter(private var item_list: Array<Imgur.Companion.Item>) :
         RecyclerView.Adapter<ProgrammingAdapter.ProgrammingViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgrammingViewHolder {
@@ -43,10 +44,30 @@ class Gallery : AppCompatActivity() {
             val view = inflater.inflate(R.layout.gallery, parent, false)
             return ProgrammingViewHolder(view, item_list)
         }
-
         override fun onBindViewHolder(holder: ProgrammingViewHolder, position: Int) {
             Picasso.get().load(item_list[position].link).into(holder.imgIcon)
-                holder.txttitle.text = item_list[position].title;
+            holder.txttitle.text = item_list[position].title;
+            holder.nbView.text = item_list[position].views
+            Thread(Runnable {
+                if (Imgur.isFav(item_list[position].id)== "true") {
+                    holder.likebutton.setImageResource(R.drawable.liked)
+                    holder.likebutton.setTag("Liked")
+                } else {
+                    holder.likebutton.setImageResource(R.drawable.like)
+                    holder.likebutton.setTag("Unlike")
+                }
+            }).start()
+            holder.likebutton.setOnClickListener {
+                Thread(Runnable {
+                    if (Imgur.changeFavValue(item_list[position].id) == "favorited") {
+                        holder.likebutton.setImageResource(R.drawable.liked)
+                        holder.likebutton.setTag("Liked")
+                    } else {
+                        holder.likebutton.setImageResource(R.drawable.like)
+                        holder.likebutton.setTag("Unlike")
+                    }
+                }).start()
+            }
         }
 
         override fun getItemCount(): Int {
@@ -54,14 +75,18 @@ class Gallery : AppCompatActivity() {
 
         }
 
-        inner class ProgrammingViewHolder(itemView: View, val item_list: Array<Imgur.Companion.Item>) : RecyclerView.ViewHolder(itemView) {
+        inner class ProgrammingViewHolder(itemView: View, var item_list: Array<Imgur.Companion.Item>) : RecyclerView.ViewHolder(itemView) {
 
             internal var imgIcon: ImageView
             internal var txttitle: TextView
+            internal var likebutton: ImageButton
+            internal var nbView: TextView
 
             init {
                 imgIcon = itemView.findViewById(R.id.picture) as ImageView
                 txttitle = itemView.findViewById(R.id.txttitle) as TextView
+                likebutton = itemView.findViewById(R.id.imageButton) as ImageButton
+                nbView = itemView.findViewById(R.id.nbr_view) as TextView
             }
         }
 

@@ -49,7 +49,7 @@ class Gallery : AppCompatActivity() {
             holder.txttitle.text = item_list[position].title;
             holder.nbView.text = item_list[position].views
             println(item_list[position].favorite)
-            if (item_list[position].favorite == "e") {
+            if (item_list[position].favorite == "true") {
                 holder.likebutton.setImageResource(R.drawable.liked)
                 holder.likebutton.setTag("Liked")
             } else {
@@ -64,6 +64,7 @@ class Gallery : AppCompatActivity() {
                     holder.likebutton.setImageResource(R.drawable.like)
                     holder.likebutton.setTag("Unlike")
                 }
+                Imgur.getImagesUser()
 
             }
         }

@@ -10,6 +10,7 @@ package com.epitech.extra.epicture
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,11 +28,16 @@ import android.widget.ImageView
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+import android.content.DialogInterface
+import android.graphics.Bitmap
+import android.widget.Toast
+import java.io.ByteArrayOutputStream
 
 
 class UploadImage :  AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 1
     private var imageValue : Intent? = null
+    private var imageBitmap : Bitmap? = null
     private var isImageSelected : Boolean = false
     private var picturePath : String? = null
 
@@ -49,19 +55,23 @@ class UploadImage :  AppCompatActivity() {
 
     fun uploadImage() {
         if (isImageSelected){
-            var url = "https://api.imgur.com/3/image"
+            var url = "https://api.imgur.com/3/upload"
             var authString : String? = null
             if (Imgur.loggedIn) {
                 ToastPrinter().print("Uploading to ${Imgur.username}'s account!", this)
                 authString = "Bearer ${Imgur.accessToken}"
             } else {
                 ToastPrinter().print("Uploading anonymously!", this)
-                authString = "Client-ID ${R.string.com_oauth_client_id}"
+                authString = "Client-ID 5c7c13bd1c6d930"
             }
+            val stream = ByteArrayOutputStream()
+            imageBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                //.addFormDataPart("type", "file")
-                .addFormDataPart("image", picturePath)
+                .addFormDataPart("type", "file")
+                .addFormDataPart("image", byteArray.toString())
                 .addFormDataPart("name", "TestName")
                 .addFormDataPart("title", "TestTitle")
                 .addFormDataPart("description", "TestDescription")
@@ -99,9 +109,7 @@ class UploadImage :  AppCompatActivity() {
 
     private fun getUri(): Uri {
         val state = Environment.getExternalStorageState()
-        return if (!state.equals(
-                Environment.MEDIA_MOUNTED,
-                ignoreCase = true
+        return if (!state.equals(Environment.MEDIA_MOUNTED, ignoreCase = true
             )
         ) MediaStore.Images.Media.INTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
@@ -117,24 +125,27 @@ class UploadImage :  AppCompatActivity() {
 
             try {
                 val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                imageBitmap = bitmap
                 // Log.d(TAG, String.valueOf(bitmap));
 
                 val uri = data.data
+                if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
+                    //var takeFlags = data.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    //contentResolver.takePersistableUriPermission(uri, takeFlags)
 
-                var takeFlags = data.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                contentResolver.takePersistableUriPermission(uri, takeFlags)
+                    var id = uri.getLastPathSegment().split(":")[1]
+                    val projection = arrayOf(MediaStore.Images.Media.DATA)
+                    var imageOrderBy = null;
 
-                var id = uri.getLastPathSegment().split(":")[1]
-                val projection = arrayOf(MediaStore.Images.Media.DATA)
-                var imageOrderBy = null;
+                    var uriNew = getUri();
+                    var selectedImagePath = "path"
 
-                var uriNew = getUri();
-                var selectedImagePath = "path"
+                    var imageCursor =
+                        managedQuery(uriNew, projection, MediaStore.Images.Media._ID + "=" + id, null, imageOrderBy)
 
-                var imageCursor = managedQuery(uriNew, projection, MediaStore.Images.Media._ID + "="+id, null, imageOrderBy)
-
-                if (imageCursor.moveToFirst()) {
-                    picturePath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                    if (imageCursor.moveToFirst()) {
+                        picturePath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                    }
                 }
 
                 println("FILE PATH IS $picturePath")
@@ -169,7 +180,7 @@ class UploadImage :  AppCompatActivity() {
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     )
                 ) {
-                    //showDialog("External storage", context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    showDialog("External storage", context, Manifest.permission.READ_EXTERNAL_STORAGE)
                 } else {
                     ActivityCompat
                         .requestPermissions(
@@ -185,6 +196,46 @@ class UploadImage :  AppCompatActivity() {
 
         } else {
             return true
+        }
+    }
+
+    fun showDialog(
+        msg: String, context: Context,
+        permission: String
+    ) {
+        val alertBuilder = AlertDialog.Builder(context)
+        alertBuilder.setCancelable(true)
+        alertBuilder.setTitle("Permission necessary")
+        alertBuilder.setMessage("$msg permission is necessary")
+        alertBuilder.setPositiveButton(android.R.string.yes,
+            DialogInterface.OnClickListener { dialog, which ->
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    arrayOf(permission),
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                )
+            })
+        val alert = alertBuilder.create()
+        alert.show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // do your stuff
+            } else {
+                Toast.makeText(
+                    this@UploadImage, "GET_ACCOUNTS Denied",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> super.onRequestPermissionsResult(
+                requestCode, permissions,
+                grantResults
+            )
         }
     }
 }

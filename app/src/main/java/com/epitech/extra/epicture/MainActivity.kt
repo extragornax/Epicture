@@ -101,7 +101,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_upload -> {
-                ToastPrinter().print("Upload soon to be done!", this)
+                val upload = Intent(this, UploadImage::class.java)
+                startActivity(upload)
             }
 
             R.id.nav_hotpage -> {
@@ -133,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val oauth = Intent(this, OauthWindow::class.java)
                     startActivity(oauth)
                     userNameInTab.text = Imgur.username
-                    creationDataInTab.text = "Feature incoming"
+                    creationDataInTab.text = "Disconnected"
 
                     val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
                     val menuNav = navigationView.menu

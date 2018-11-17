@@ -59,13 +59,12 @@ class UploadImage :  AppCompatActivity() {
         ToastPrinter().print("Upload in progress", this)
         if (isImageSelected){
             var url = "https://api.imgur.com/3/upload"
-            var authString : String? = null
-            if (Imgur.loggedIn) {
+            var authString = if (Imgur.loggedIn) {
                 ToastPrinter().print("Uploading to ${Imgur.username}'s account!", this)
-                authString = "Bearer ${Imgur.accessToken}"
+                "Bearer ${Imgur.accessToken}"
             } else {
                 ToastPrinter().print("Uploading anonymously!", this)
-                authString = "Client-ID 5c7c13bd1c6d930"
+                "Client-ID 5c7c13bd1c6d930"
             }
             val stream = ByteArrayOutputStream()
             imageBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -83,7 +82,7 @@ class UploadImage :  AppCompatActivity() {
             var response = makeACallPost(url, requestBody, authString)
             var json = response.body()?.string()
             val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
-            var urlString = jsonObj!!.getJSONObject("data")
+            var urlString = jsonObj.getJSONObject("data")
             var idShare = urlString!!.getString("id")
 
             var urlShare = "https://api.imgur.com/3/gallery/image/$idShare?title=EpictureUpload&topic=Epicture"
@@ -148,8 +147,7 @@ class UploadImage :  AppCompatActivity() {
                     val projection = arrayOf(MediaStore.Images.Media.DATA)
                     var imageOrderBy = null;
 
-                    var uriNew = getUri();
-                    var selectedImagePath = "path"
+                    var uriNew = getUri()
 
                     var imageCursor =
                         managedQuery(uriNew, projection, MediaStore.Images.Media._ID + "=" + id, null, imageOrderBy)
@@ -160,7 +158,6 @@ class UploadImage :  AppCompatActivity() {
                 }
 
                 println("FILE PATH IS $picturePath")
-                //Log.d("tag", "image path : $picturePath")
 
                 val imageView = findViewById<ImageView>(R.id.imageViewUpload)
                 imageView.setImageBitmap(bitmap)
@@ -194,11 +191,7 @@ class UploadImage :  AppCompatActivity() {
                     showDialog("External storage", context, Manifest.permission.READ_EXTERNAL_STORAGE)
                 } else {
                     ActivityCompat
-                        .requestPermissions(
-                            context as Activity,
-                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-                        )
+                        .requestPermissions(context, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
                 }
                 return false
             } else {
@@ -219,7 +212,7 @@ class UploadImage :  AppCompatActivity() {
         alertBuilder.setTitle("Permission necessary")
         alertBuilder.setMessage("$msg permission is necessary")
         alertBuilder.setPositiveButton(android.R.string.yes,
-            DialogInterface.OnClickListener { dialog, which ->
+            DialogInterface.OnClickListener { _, _ ->
                 ActivityCompat.requestPermissions(
                     context as Activity,
                     arrayOf(permission),

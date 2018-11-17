@@ -30,8 +30,10 @@ import org.json.JSONObject
 import java.io.IOException
 import android.content.DialogInterface
 import android.graphics.Bitmap
+import android.util.Base64
 import android.widget.Toast
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 
 class UploadImage :  AppCompatActivity() {
@@ -66,12 +68,13 @@ class UploadImage :  AppCompatActivity() {
             }
             val stream = ByteArrayOutputStream()
             imageBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            val byteArray = stream.toByteArray()
-
+            val fd = File(picturePath)
+            val string = fd.readBytes()
+            val b64 = Base64.encodeToString(string, 0)
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("type", "file")
-                .addFormDataPart("image", byteArray.toString())
+                .addFormDataPart("image", b64)
                 .addFormDataPart("name", "TestName")
                 .addFormDataPart("title", "TestTitle")
                 .addFormDataPart("description", "TestDescription")

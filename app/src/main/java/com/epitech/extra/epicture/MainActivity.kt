@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.design.widget.TextInputLayout
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -101,10 +102,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_upload -> {
-                ToastPrinter().print("Upload soon to be done!", this)
+                val upload = Intent(this, UploadImage::class.java)
+                startActivity(upload)
             }
 
             R.id.nav_hotpage -> {
+                findViewById<TextInputLayout>(R.id.searchBarImgur).visibility = View.INVISIBLE
                 setGHotPage()
                 if (Imgur.loggedIn)
                     ToastPrinter().print("Hot section", this)
@@ -114,6 +117,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             R.id.nav_gallery -> {
 //                setContentView(R.layout.gallery_back)
+                findViewById<TextInputLayout>(R.id.searchBarImgur).visibility = View.INVISIBLE
                 val a = findViewById<RecyclerView>(R.id.recycler_test)
                 a.setLayoutManager(LinearLayoutManager(this))
                 val gallery = Gallery.ProgrammingAdapter(Imgur.getImagesUser().toTypedArray())
@@ -125,7 +129,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_search -> {
-                ToastPrinter().print("Search soon to be done!", this)
+                val a = findViewById<RecyclerView>(R.id.recycler_search)
+                a.setLayoutManager(LinearLayoutManager(this))
+                findViewById<TextInputLayout>(R.id.searchBarImgur).visibility = View.VISIBLE
+                val gallery = Gallery.ProgrammingAdapter(arrayOf())
+                a.setAdapter(gallery)
             }
 
             R.id.nav_relog -> {
@@ -133,7 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val oauth = Intent(this, OauthWindow::class.java)
                     startActivity(oauth)
                     userNameInTab.text = Imgur.username
-                    creationDataInTab.text = "Feature incoming"
+                    creationDataInTab.text = "Disconnected"
 
                     val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
                     val menuNav = navigationView.menu
@@ -155,12 +163,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     ToastPrinter().print("You are now disconnected!", this)
                 }
             }
-
-            /*
-            R.id.nav_share -> {
-                ToastPrinter().print("Thank you for sharing our app!")
-            }
-            */
 
             R.id.nav_extragornax -> {
                 ToastPrinter().print("https://github.com/Extragornax", this)

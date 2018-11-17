@@ -56,6 +56,7 @@ class UploadImage :  AppCompatActivity() {
     }
 
     fun uploadImage() {
+        ToastPrinter().print("Upload in progress", this)
         if (isImageSelected){
             var url = "https://api.imgur.com/3/upload"
             var authString : String? = null
@@ -82,8 +83,15 @@ class UploadImage :  AppCompatActivity() {
             var response = makeACallPost(url, requestBody, authString)
             var json = response.body()?.string()
             val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
-            var urlString = jsonObj!!.getString("data")
+            var urlString = jsonObj!!.getJSONObject("data")
+            var idShare = urlString!!.getString("id")
+
+            var urlShare = "https://api.imgur.com/3/gallery/image/$idShare?title=EpictureUpload&topic=Epicture"
+            var responseShare = makeACallPost(urlShare, FormBody.Builder().build(), authString)
+
             println("OUTPUT UPLOAD $jsonObj -> $urlString")
+            println("OUTPUT UPLOAD SHARE $idShare -> $responseShare")
+            ToastPrinter().print("Your public image is now live with ID $idShare", this)
 
         } else {
             ToastPrinter().print("Please choose an image to upload before", this)

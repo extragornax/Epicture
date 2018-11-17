@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
@@ -129,11 +131,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_search -> {
-                val a = findViewById<RecyclerView>(R.id.recycler_search)
+/*                val a = findViewById<RecyclerView>(R.id.recycler_search)
                 a.setLayoutManager(LinearLayoutManager(this))
                 findViewById<TextInputLayout>(R.id.searchBarImgur).visibility = View.VISIBLE
                 val gallery = Gallery.ProgrammingAdapter(arrayOf())
-                a.setAdapter(gallery)
+                a.setAdapter(gallery)*/
+                var intent = Intent(this, Search::class.java)
+                startActivity(intent)
             }
 
             R.id.nav_relog -> {

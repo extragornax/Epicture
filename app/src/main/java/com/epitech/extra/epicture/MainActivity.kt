@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             menuNav.findItem(R.id.nav_relog).title = "Connect"
             Toast.makeText(this, "Welcome! Please connect your account", Toast.LENGTH_SHORT).show()
+            menuNav.findItem(R.id.nav_gallery).isEnabled = false
+            menuNav.findItem(R.id.nav_fav).isEnabled = false
         }
 
         setGHotPage()
@@ -125,6 +127,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val gallery = Gallery.ProgrammingAdapter(Imgur.getImagesUser().toTypedArray())
                 a.setAdapter(gallery)
                 if (Imgur.loggedIn)
+                    ToastPrinter().print("User submissions", this)
+                else
+                    ToastPrinter().print("You are not connected to your account!", this)
+            }
+
+            R.id.nav_fav -> {
+                findViewById<TextInputLayout>(R.id.searchBarImgur).visibility = View.INVISIBLE
+                val a = findViewById<RecyclerView>(R.id.recycler_test)
+                a.setLayoutManager(LinearLayoutManager(this))
+                val gallery = Gallery.ProgrammingAdapter(Imgur.getFavoriteUser().toTypedArray())
+                a.setAdapter(gallery)
+                if (Imgur.loggedIn)
                     ToastPrinter().print("User favorites", this)
                 else
                     ToastPrinter().print("You are not connected to your account!", this)
@@ -151,6 +165,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val menuNav = navigationView.menu
                     val relogVal = menuNav.findItem(R.id.nav_relog)
                     relogVal.title = "Disconnect"
+                    menuNav.findItem(R.id.nav_gallery).isEnabled = true
+                    menuNav.findItem(R.id.nav_fav).isEnabled = true
                 } else {
                     userNameInTab.text = "Disconnected"
                     creationDataInTab.text = "Disconnected"
@@ -164,6 +180,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val menuNav = navigationView.menu
                     val relogVal = menuNav.findItem(R.id.nav_relog)
                     relogVal.title = "Connect"
+                    menuNav.findItem(R.id.nav_gallery).isEnabled = false
+                    menuNav.findItem(R.id.nav_fav).isEnabled = false
                     ToastPrinter().print("You are now disconnected!", this)
                 }
             }

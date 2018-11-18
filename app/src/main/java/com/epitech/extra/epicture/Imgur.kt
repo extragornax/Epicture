@@ -56,6 +56,24 @@ class Imgur : AppCompatActivity() {
             }
         }
 
+        fun getFavoriteUser(): List<Item> {
+            return try {
+                val url = "https://api.imgur.com/3/account/me/favorites/"
+                val request = Request.Builder().url(url).get()
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Authorization", "Bearer $accessToken")
+                    .build()
+                val response = OkHttpClient().newCall(request).execute()
+                val json = response.body()?.string()
+                val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
+                val data = jsonObj.getJSONArray("data")
+                println(data)
+                gson.fromJson(data.toString(), object : TypeToken<List<Item>>() {}.type)
+            } catch (e: Exception) {
+                listOf()
+            }
+        }
+
         fun getHotViralImages() : List<Item> {
             return try {
                 val url = "https://api.imgur.com/3/gallery/hot/viral/0.json"

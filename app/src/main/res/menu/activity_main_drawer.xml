@@ -19,7 +19,11 @@
         <item
                 android:id="@+id/nav_gallery"
                 android:icon="@drawable/ic_menu_gallery"
-                android:title="User Submissions"/>
+                android:title="User Submissions" android:enabled="false"/>
+        <item
+                android:id="@+id/nav_fav"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="User Favorites" android:checkable="false" android:enabled="false"/>
         <item
                 android:id="@+id/nav_search"
                 android:icon="@drawable/ic_menu_gallery"

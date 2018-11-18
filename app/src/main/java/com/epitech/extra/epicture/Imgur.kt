@@ -121,7 +121,7 @@ class Imgur : AppCompatActivity() {
         }
         fun searchImage(searchString : String) : List<Item> {
             return try {
-                val url = "\thttps://api.imgur.com/3/gallery/search?q_all=$searchString"
+                val url = "\thttps://api.imgur.com/3/gallery/search?q_type=jpg&q_all=$searchString"
                 var authVal = if (Imgur.loggedIn)
                     "Bearer $accessToken"
                 else

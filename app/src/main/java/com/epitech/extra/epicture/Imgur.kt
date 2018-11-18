@@ -119,5 +119,26 @@ class Imgur : AppCompatActivity() {
             }
             return urlString
         }
+        fun searchImage(searchString : String) : List<Item> {
+            return try {
+                val url = "\thttps://api.imgur.com/3/gallery/search?q_type=jpg&q_all=$searchString"
+                var authVal = if (Imgur.loggedIn)
+                    "Bearer $accessToken"
+                else
+                    "Client-ID 5c7c13bd1c6d930"
+                val request = Request.Builder().url(url).get()
+                    .addHeader("cache-control", "no-cache")
+                    .addHeader("Authorization", authVal)
+                    .build()
+                val response = OkHttpClient().newCall(request).execute()
+                val json = response.body()?.string()
+                val jsonObj = JSONObject(json?.substring(json.indexOf("{"), json.lastIndexOf("}") + 1))
+                val data = jsonObj.getJSONArray("data")
+                gson.fromJson(data.toString(), object : TypeToken<List<Item>>() {}.type)
+            } catch (e: Exception) {
+                listOf()
+            }
+        }
+
     }
 }

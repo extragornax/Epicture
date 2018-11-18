@@ -31,14 +31,12 @@ class Search : AppCompatActivity() {
                 if (search.isNullOrBlank()) {
                     ToastPrinter().print("Enter a key word :)", this)
                 } else {
-                    val inputManager: InputMethodManager =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     search_button.visibility = View.INVISIBLE
                     search_entry.visibility = View.INVISIBLE
                     findViewById<TextInputLayout>(R.id.search_input_layout).visibility = View.INVISIBLE
                     val a = findViewById<RecyclerView>(R.id.search_view)
                     a.visibility = View.VISIBLE
                     a.setLayoutManager(LinearLayoutManager(this))
-                    inputManager.hideSoftInputFromWindow(currentFocus.windowToken, InputMethodManager.SHOW_FORCED)
                     val img_list =  Imgur.searchImage(search)
                     val arrayOfItems = img_list.toTypedArray()
                     val gallery = Gallery.ProgrammingAdapter(arrayOfItems)
